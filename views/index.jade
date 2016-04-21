@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  div.container
+    div.content
+      div.page-header
+        h1 #{title}
+    br
+    form(method="POST", action="/upload", enctype="multipart/form-data")
+      input(type="file", name="ufile")
+      input(type="submit")
+  footer.footer
+    div.container
+      p.test-muted
+        &copy; gruppe x
