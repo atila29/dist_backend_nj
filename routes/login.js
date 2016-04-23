@@ -1,5 +1,4 @@
 var express = require('express');
-var soap = require('soap');
 var net = require('net');
 var jwt    = require('jsonwebtoken');
 
