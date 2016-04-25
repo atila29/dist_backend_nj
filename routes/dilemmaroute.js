@@ -5,12 +5,12 @@ var jwt    = require('jsonwebtoken');
 var Dilemma = require('../models/dilemma');
 
 var router = express.Router();
-var secret = require('../config').secret
+var secret = require('../config').secret;
 
 router.use(function(req, res, next) {
   // check header or url parameters or post parameters for token
   var token = req.body.token || req.query.token || req.headers['x-access-token'] || req.header.token;
-
+  console.log(req.body);
   // decode token
   if (token) {
 
@@ -38,7 +38,7 @@ router.use(function(req, res, next) {
 });
 
 /* skal laves */
-router.post('/opret/p', function(req, res, next) {
+router.post('/opret-e/p', function(req, res, next) {
   var form = new formidable.IncomingForm();
 	form.keepExtensions = true;
 	form.uploadDir = __dirname + '/../public/upload/';
@@ -57,7 +57,14 @@ router.post('/opret', function(req, res, next) {
   var input = JSON.parse(req.body);
   console.log(input);
 
-  var d = new Dilemma(JSON.parse(input));
+  var d = new Dilemma({
+    name : input.name,
+    user : req.decoded.username,
+    desc : input.desc,
+    alvor : input.alvor,
+    p_answers: input.p_answers
+  });
+
   d.save(function(err){
     if(err)
       res.json({error: err});
