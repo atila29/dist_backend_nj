@@ -8,9 +8,13 @@ var router = express.Router();
 var secret = require('../config').secret;
 
 router.use(function(req, res, next) {
+  if(req.method == 'OPTIONS'){
+    next();
+    return;
+  }
   // check header or url parameters or post parameters for token
   var token = req.body.token || req.query.token || req.headers['x-access-token'] || req.header.token;
-  console.log(req.body);
+  //console.log(req.body);
   // decode token
   if (token) {
 
@@ -54,8 +58,9 @@ router.post('/opret-e/p', function(req, res, next) {
 
 /* skal laves */
 router.post('/opret', function(req, res, next) {
-  var input = JSON.parse(req.body);
-  console.log(input);
+  console.log(req.body);
+  //var input = JSON.parse(req.body);
+  var input = req.body;
 
   var d = new Dilemma({
     name : input.name,
@@ -66,11 +71,12 @@ router.post('/opret', function(req, res, next) {
   });
 
   d.save(function(err){
-    if(err)
+    if(err){
       res.json({error: err});
-    res.json(d);
+    } else {
+      res.json(d);
+    }
   });
-  res.end();
 });
 
 router.get('/me', function(req, res, next){
