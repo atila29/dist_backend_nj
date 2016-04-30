@@ -10,7 +10,7 @@ module.exports = mongoose.model('Dilemma', new Schema({
     user: String,
     desc: String,
     alvor: Number,
-    p_answers: [{text : String}],
+    p_answers: [{text : String, pic : {type : mongoose.Schema.Types.ObjectId, ref : 'Image' ,default : undefined}}],
     active: {type: Boolean, default: true},
     reg_time: {type: Date, default: Date(Date.toString())}
 }));
