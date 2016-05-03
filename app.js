@@ -12,6 +12,7 @@ var uploads = require('./routes/upload');
 var login = require('./routes/login');
 var auth = require('./routes/auth');
 var dilemmaCRoute = require('./routes/dilemmaroute');
+var dilemmaRRoute = require('./routes/dilemmainfo');
 
 var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var config = require('./config'); // get our config file
@@ -43,8 +44,9 @@ app.use('/', routes);
 app.use('/users', users);
 app.use('/upload', uploads);
 app.use('/login', login);
-app.use('/api/authenticate', auth)
-app.use('/d', dilemmaCRoute)
+app.use('/api/authenticate', auth);
+app.use('/d', dilemmaCRoute);
+app.use('/r', dilemmaRRoute);
 
 
 
