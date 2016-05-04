@@ -1,7 +1,7 @@
 var express = require('express');
 var mongoose = require('mongoose');
 var Dilemma = require('../models/dilemma');
-var ImageFile = require('../models/Image');
+var ImageFile = require('../models/image');
 
 var router = express.Router();
 

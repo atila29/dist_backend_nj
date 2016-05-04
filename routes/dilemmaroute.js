@@ -1,9 +1,14 @@
 var express = require('express');
 var formidable = require('formidable');
 var jwt    = require('jsonwebtoken');
+var mongoose = require('mongoose');
+var array = require('array');
+var Schema = mongoose.Schema;
+var ObjectId = Schema.Types.ObjectId;
 
 var Dilemma = require('../models/dilemma');
-var ImageFile = require('../models/Image');
+var ImageFile = require('../models/image');
+var Response = require('../models/response');
 
 var router = express.Router();
 var secret = require('../config').secret;
@@ -47,6 +52,37 @@ router.use(function(req, res, next) {
   }
 });
 
+router.post('/answer/:id/:answer', function(req, res, next){
+  Dilemma.findById(req.params.id, function(err, doc){
+    console.log(req.decoded.username);
+    console.log(req.params.answer);
+
+    // check if the answer exist
+    var arr = array(JSON.parse(JSON.stringify(doc.p_answers)));
+    if (arr.find({_id : req.params.answer.toString()})) console.log('virker'); // hvis dette ikke er sandt skal fejl sendes og return;
+    //check if user already answered
+    arr = Response.find({user : req.decoded.username.toString(), answer : req.params.answer.toString()}, function(err, docs) {
+      console.log(JSON.parse(JSON.stringify(docs)));
+      if(docs.length < 1){
+        var r = new Response({
+          dilemma : doc._id,
+          user : req.decoded.username,
+          answer : req.params.answer
+        });
+        r.save(function(err) {
+          if (err) throw err;
+          console.log('Response saved');
+          res.json({success : true});
+        });
+      }
+      else {
+        res.json({success : false, msg : 'already answered'});
+      }
+    });
+  });
+});
+
+// denne skal være opret uden form!
 router.post('/opret/p', function(req, res, next) {
 
 /* skal laves */
@@ -63,10 +99,8 @@ router.post('/opret/p', function(req, res, next) {
 	});
 });
 
-/* skal laves */
+/* bør flyttes til route for form's */
 router.post('/opret', function(req, res, next) {
-  //var input = JSON.parse(req.body);
-
 
   var form = new formidable.IncomingForm();
   form.keepExtensions = true;
@@ -94,8 +128,8 @@ router.post('/opret', function(req, res, next) {
     var q = JSON.parse(fields.p_answers);
     console.log(q);
 
-    for(var i = 0; i < q.length; i++) {
-      if(pics[i]){
+    for (var i = 0; i < q.length; i++) {
+      if (pics[i]){
         answers.push({text : q[i].text, pic : pics[i]._id});
       }
       else {
@@ -112,7 +146,7 @@ router.post('/opret', function(req, res, next) {
     });
 
     d.save(function(err){
-      if(err) throw err;
+      if (err) throw err;
       console.log('saved dilemma');
     });
 
@@ -121,6 +155,7 @@ router.post('/opret', function(req, res, next) {
 
 });
 
+//udvid til mine-dilemmaer & besvarede.
 router.get('/me', function(req, res, next){
   res.json({user : req.decoded.username});
 });
