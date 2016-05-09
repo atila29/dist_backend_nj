@@ -2,18 +2,60 @@ var express = require('express');
 var mongoose = require('mongoose');
 var Dilemma = require('../models/dilemma');
 var ImageFile = require('../models/image');
+var Response = require('../models/response');
+
+var ObjectId = mongoose.Types.ObjectId;
 
 var router = express.Router();
 
-
+// http - alle dilemma'er returneres
 router.get('/getall', function(req, res){
   Dilemma.find(function(err, d){
-    if(err) {
+    if (err) {
       console.log(err);
       res.json({success : false});
     }
     console.log(d);
     res.json(d);
+  });
+});
+
+// static
+router.get('/getstat/:id', function(req, res){
+  Dilemma.findById(req.params.id, function(err, docs) {
+    var a = [];
+    var r = [];
+    var i = 0;
+    var samletAntalStemmer = 0;
+    docs.p_answers.forEach(function(o){
+      a.push(o._id);
+      console.log(o);
+    });
+    a.forEach(function(o){
+      var callback = function(c) {
+        console.log(a);
+        samletAntalStemmer += c;
+        r[i++]  = {answer : o, count : c};
+        console.log(r);
+        console.log(r.length + ' : ' + a.length + '; c: ' + c + '; i: ' + i);
+        if (r.length == a.length) {
+          r.forEach(function(o1) {
+            o1.percent = o1.count / samletAntalStemmer;
+          });
+          res.json({info  : {total_count : samletAntalStemmer}, answers : r});
+        }
+
+      };
+      Response.find({answer : o}, function(err, count) {
+      console.log(o);
+        if (err) {
+          res.json({success : false, msg : 'smth'});
+          return;
+        }
+        callback(count.length);
+      });
+    });
+
   });
 });
 
