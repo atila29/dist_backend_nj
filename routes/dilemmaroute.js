@@ -52,6 +52,25 @@ router.use(function(req, res, next) {
   }
 });
 
+router.get('/already/:id', function (req, res, next) {
+  Response.find({dilemma : req.params.id, user : req.decoded.username}, function(err, doc) {
+    if (err) {
+      res.json({success : false, error : true});
+      console.log(error);
+    }
+    else {
+      console.log(doc);
+      console.log(doc.length);
+      if (doc[0]) {
+        res.json({success : true, answered : true});
+      }
+      else {
+        res.json({success : true, answered : false});
+      }
+    }
+  })
+});
+
 router.post('/answer/:id/:answer', function(req, res, next){
   Dilemma.findById(req.params.id, function(err, doc){
     console.log(req.decoded.username);
@@ -109,8 +128,10 @@ router.post('/opret', function(req, res, next) {
   var pics = [];
 
   form.on('file', function(name, file){
+    var p = file.path.split('public')[1];
+    p = "http://localhost:3001" + p;
     var pic = new ImageFile({
-      url : file.path
+      url : p
     });
     pic.save(function(err) {
       if (err) throw err;
