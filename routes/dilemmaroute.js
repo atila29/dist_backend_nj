@@ -80,7 +80,7 @@ router.post('/answer/:id/:answer', function(req, res, next){
     var arr = array(JSON.parse(JSON.stringify(doc.p_answers)));
     if (arr.find({_id : req.params.answer.toString()})) console.log('virker'); // hvis dette ikke er sandt skal fejl sendes og return;
     //check if user already answered
-    arr = Response.find({user : req.decoded.username.toString(), answer : req.params.answer.toString()}, function(err, docs) {
+    arr = Response.find({user : req.decoded.username.toString(), dilemma : req.params.id.toString()}, function(err, docs) {
       console.log(JSON.parse(JSON.stringify(docs)));
       if(docs.length < 1){
         var r = new Response({
@@ -144,9 +144,10 @@ router.post('/opret', function(req, res, next) {
 		console.log(files);
     console.log(JSON.parse(JSON.stringify(fields)));
 
-     var answers = [];
+    var answers = [];
 
-    var q = JSON.parse(fields.p_answers);
+     // dette skal fejlhåndteres, gerne ogs' testes,
+    var q = JSON.parse(fields.p_answers); // fordi angular sender json-arrays i forms serialized
     console.log(q);
 
     for (var i = 0; i < q.length; i++) {
