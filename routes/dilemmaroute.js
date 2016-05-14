@@ -3,6 +3,9 @@ var formidable = require('formidable');
 var jwt    = require('jsonwebtoken');
 var mongoose = require('mongoose');
 var array = require('array');
+var FTPClient = require('ftp');
+var fs = require('fs');
+
 var Schema = mongoose.Schema;
 var ObjectId = Schema.Types.ObjectId;
 
@@ -11,6 +14,7 @@ var ImageFile = require('../models/image');
 var Response = require('../models/response');
 
 var router = express.Router();
+var config = require('../config');
 var secret = require('../config').secret;
 
 router.use(function(req, res, next) {
@@ -128,8 +132,19 @@ router.post('/opret', function(req, res, next) {
   var pics = [];
 
   form.on('file', function(name, file){
+
     var p = file.path.split('public')[1];
-    p = "http://localhost:3001" + p;
+    var c = new FTPClient();
+    c.on('ready', function() {
+      console.log('klar');
+      c.put(file.path, 'uploads/'+p, function (err) {
+        if(err) throw err;
+        c.end();
+      });
+    });
+    c.connect(config.ftp_server);
+
+    p = config.cdn_server + p;
     var pic = new ImageFile({
       url : p
     });

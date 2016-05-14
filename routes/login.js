@@ -1,11 +1,12 @@
 var express = require('express');
 var net = require('net');
 var jwt    = require('jsonwebtoken');
+var config = require('../config');
 
 var router = express.Router();
 
-const HOST = 'localhost';
-const PORT = '4444';
+const HOST = config.java_server.host;
+const PORT = config.java_server.port;
 
 var secret = require('../config').secret
 
@@ -30,7 +31,7 @@ router.post('/', function(req, res, next){
     console.log(json);
     if(!json.hasOwnProperty("error")) {
       var token = jwt.sign(json, secret, {
-          expiresIn : 3600
+          expiresIn : config.tok_expires
         });
       res.json({token : token});
     }

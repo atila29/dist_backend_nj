@@ -3,6 +3,7 @@ var mongoose = require('mongoose');
 var Dilemma = require('../models/dilemma');
 var ImageFile = require('../models/image');
 var Response = require('../models/response');
+var config = require('../config');
 
 var ObjectId = mongoose.Types.ObjectId;
 

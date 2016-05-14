@@ -54,31 +54,7 @@ app.use('/r', dilemmaRRoute);
 mongoose.connect(config.database); // connect to database
 app.set('tSecret', config.secret); // secret variable
 
-
-////
-app.get('/setup', function(req, res) {
-
-  // sample dilemma
-  var d = new Dilemma({
-    name: 'test',
-    user: 'test_u',
-    desc: 'test_d',
-    alvor: 2,
-    p_answers: [{text:'virk1'}, {text:'virk2'}]
-  });
-
-
-  // save the sample user
-  d.save(function(err) {
-    if (err) throw err;
-
-    console.log('User saved successfully');
-    res.json({ success: true });
-  });
-});
-///
-
-
+  
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
