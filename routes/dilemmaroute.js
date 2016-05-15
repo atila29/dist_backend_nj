@@ -106,20 +106,23 @@ router.post('/answer/:id/:answer', function(req, res, next){
 });
 
 // denne skal være opret uden form!
-router.post('/opret/p', function(req, res, next) {
+router.post('/csimple', function(req, res, next) {
+  var body = req.body;
 
-/* skal laves */
-  var form = new formidable.IncomingForm();
-	form.keepExtensions = true;
-	form.uploadDir = __dirname + '/../public/upload/';
+  var d = new Dilemma({
+    user : req.decoded.username,
+    name : body.name,
+    desc : body.desc,
+    alvor : body.alvor,
+    p_answers : body.p_answers
+  });
 
-
-	form.parse(req, function(err, fields, files) {
-		res.writeHead(200, {'content-type': 'text/plain'});
-    res.write('received upload:\n\n');
-		console.log(files.name);
-    res.end(util.inspect({fields: fields, files: files}));
-	});
+  d.save(function(err){
+    if (err) throw err;
+    console.log('saved dilemma');
+    res.json({"success" : true})
+  });
+  
 });
 
 /* bør flyttes til route for form's */
