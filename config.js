@@ -13,7 +13,7 @@ module.exports = {
     port : '4444'
   },
   cdn_server : {
-    host : '82.211.206.158',
+    host : 'http://82.211.206.158',
     port : '7878'
   },
 };

@@ -133,20 +133,21 @@ router.post('/opret', function(req, res, next) {
 
   form.on('file', function(name, file){
 
-    var p = file.path.split('public')[1];
+    var p = file.path.split('/upload/')[1];
+    console.log('her: ' + p);
     var c = new FTPClient();
     c.on('ready', function() {
       console.log('klar');
-      c.put(file.path, 'uploads/'+p, function (err) {
+      c.put(file.path, '/uploads/'+p, function (err) {
         if(err) throw err;
         c.end();
       });
     });
     c.connect(config.ftp_server);
 
-    p = config.cdn_server + p;
+    var p0 = config.cdn_server.host + ':' + config.cdn_server.port + '/' +p;
     var pic = new ImageFile({
-      url : p
+      url : p0
     });
     pic.save(function(err) {
       if (err) throw err;

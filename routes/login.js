@@ -36,8 +36,13 @@ router.post('/', function(req, res, next){
       res.json({token : token});
     }
     else {
-      res.json({'error' : 'no_token'});
+      res.json({error : 'no_token'});
     }
+  });
+
+  client.on('error', function(err) {
+    console.log(err);
+    res.json({error : 'no connection'});
   });
 
   client.on('end', function(){
