@@ -13,6 +13,7 @@ var login = require('./routes/login');
 var auth = require('./routes/auth');
 var dilemmaCRoute = require('./routes/dilemmaroute');
 var dilemmaRRoute = require('./routes/dilemmainfo');
+var formRoute = require('./routes/formroute');
 
 var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var config = require('./config'); // get our config file
@@ -47,6 +48,7 @@ app.use('/login', login);
 app.use('/api/authenticate', auth);
 app.use('/d', dilemmaCRoute);
 app.use('/r', dilemmaRRoute);
+app.use('/f', formRoute);
 
 
 
@@ -54,7 +56,7 @@ app.use('/r', dilemmaRRoute);
 mongoose.connect(config.database); // connect to database
 app.set('tSecret', config.secret); // secret variable
 
-  
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');

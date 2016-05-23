@@ -18,16 +18,7 @@ var config = require('../config');
 var secret = require('../config').secret;
 
 router.use(function(req, res, next) {
-
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, token");
-
-  if(req.method == 'OPTIONS'){
-    next();
-    return;
-  }
-
-
+  if(req.method == 'OPTIONS') return next();
   // check header or url parameters or post parameters for token
   var token = req.body.token || req.query.token || req.headers['x-access-token'] || req.header.token || req.headers["token"];
   // decode token
@@ -122,79 +113,11 @@ router.post('/csimple', function(req, res, next) {
     console.log('saved dilemma');
     res.json({"success" : true})
   });
-  
+
 });
 
 /* bør flyttes til route for form's */
-router.post('/opret', function(req, res, next) {
 
-  var form = new formidable.IncomingForm();
-  form.keepExtensions = true;
-  form.uploadDir = __dirname + '/../public/upload/';
-
-  var pics = [];
-
-  form.on('file', function(name, file){
-
-    var p = file.path.split('/upload/')[1];
-    console.log('her: ' + p);
-    var c = new FTPClient();
-    c.on('ready', function() {
-      console.log('klar');
-      c.put(file.path, '/uploads/'+p, function (err) {
-        if(err) throw err;
-        c.end();
-      });
-    });
-    c.connect(config.ftp_server);
-
-    var p0 = config.cdn_server.host + ':' + config.cdn_server.port + '/' +p;
-    var pic = new ImageFile({
-      url : p0
-    });
-    pic.save(function(err) {
-      if (err) throw err;
-      console.log('Image saved');
-    });
-    pics.push(pic);
-  });
-
-  form.parse(req, function(err, fields, files) {
-		console.log(files);
-    console.log(JSON.parse(JSON.stringify(fields)));
-
-    var answers = [];
-
-     // dette skal fejlhåndteres, gerne ogs' testes,
-    var q = JSON.parse(fields.p_answers); // fordi angular sender json-arrays i forms serialized
-    console.log(q);
-
-    for (var i = 0; i < q.length; i++) {
-      if (pics[i]){
-        answers.push({text : q[i].text, pic : pics[i]._id});
-      }
-      else {
-        answers.push({text : q[i].text})
-      }
-    }
-
-    var d = new Dilemma({
-      user : req.decoded.username,
-      name : fields.name,
-      desc : fields.desc,
-      alvor : fields.alvor,
-      p_answers : answers
-    });
-
-    d.save(function(err){
-      if (err) throw err;
-      console.log('saved dilemma');
-    });
-
-    res.json({"success" : true})
-	});
-
-});
 
 //udvid til mine-dilemmaer & besvarede.
 router.get('/me', function(req, res, next){
