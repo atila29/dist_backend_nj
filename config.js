@@ -1,6 +1,6 @@
 module.exports = {
   secret: 'IMsecret',
-  'database': 'mongodb://localhost/test',
+  'database': 'mongodb://localhost/exam',
   tok_expires : 3600, //sekunder
   ftp_server : {
     host : '82.211.206.158',
